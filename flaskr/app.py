@@ -1,6 +1,6 @@
 import os
 from flask_wtf import FlaskForm
-from wtforms import StringField, IntegerField, DateField
+from wtforms import StringField, IntegerField, DateField, SelectField
 from wtforms.validators import DataRequired
 from flask import Flask, render_template, request, redirect, url_for
 
@@ -22,8 +22,7 @@ def index():
 
 class AnimalForm(FlaskForm):
     nomeanimal = StringField("Nome", validators=[DataRequired()])
-    codespecie = StringField("Cod Especie", validators=[DataRequired()])
-    codanimal = IntegerField("Cod Animal")
+    codanimal = IntegerField("Cod Animal", validators=[DataRequired()])
     codanimalpai = IntegerField("Cod Pai")
     codanimalmae = IntegerField("Cod Mae")
     dtnascanimal = DateField("Data", validators=[DataRequired()])
@@ -39,15 +38,14 @@ class EspecieForm(FlaskForm):
 def animais():
     column_names = utils.column_names('animais')
 
+    choices = [li[:2] for li in especiesDAO.select_all()]
+    setattr(AnimalForm, "codespecie", SelectField("Cod Especie", choices=choices))
+
     animal_form = AnimalForm(request.form)
     if request.method == 'POST':
         vals = [animal_form.data[col] for col in column_names]
         animal = Animal(*vals)
         animaisDAO.insert(animal)
-        if animal.codanimal is None:
-            animaisDAO.insert(animal)
-        else:
-            animaisDAO.update(animal)
         return redirect(url_for('animais'))
 
     row_data = animaisDAO.select_all()
@@ -62,10 +60,7 @@ def especies():
     if request.method == 'POST':
         vals = [especie_form.data[col] for col in column_names]
         especie = Especie(*vals)
-        if especie.codespecie is None:
-            especiesDAO.insert(especie)
-        else:
-            especiesDAO.update(especie)
+        especiesDAO.insert(especie)
         return redirect(url_for('especies'))
 
     row_data = especiesDAO.select_all()
@@ -74,12 +69,16 @@ def especies():
 
 @app.route('/AnimaisEspecies')
 def animais_especies():
-    return render_template("AnimaisEspecies.html")
+    column_names = ["Animal", "Especie"]
+    row_data = utils.animais_especie()
+    return render_template("AnimaisEspecies.html", column_names=column_names, row_data=row_data)
 
 
 @app.route('/AnimaisPorEspecie')
 def animais_por_especie():
-    return render_template("AnimaisPorEspecie.html")
+    column_names = ["Especie", "Quantidade de animais"]
+    row_data = utils.animais_por_especie()
+    return render_template("AnimaisPorEspecie.html", column_names=column_names, row_data=row_data)
 
 
 if __name__ == '__main__':

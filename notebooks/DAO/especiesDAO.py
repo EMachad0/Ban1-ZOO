@@ -10,8 +10,8 @@ def select_all():
 def insert(especie):
     cur = conn.cursor()
     cur.execute(
-        "INSERT INTO especies (codespecie, nomeespecie, expectativaespecie) VALUES (default, %s, %s)",
-        (especie.nomeespecie, especie.expectativaespecie))
+        "INSERT INTO especies (codespecie, nomeespecie, expectativaespecie) VALUES (%s, %s, %s) ON CONFLICT (codespecie) DO UPDATE SET nomeespecie = %s, expectativaespecie = %s",
+        (especie.codespecie, especie.nomeespecie, especie.expectativaespecie, especie.nomeespecie, especie.expectativaespecie))
     conn.commit()
 
 
