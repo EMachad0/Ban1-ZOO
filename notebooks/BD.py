@@ -2,10 +2,13 @@ import os
 import psycopg2
 
 
+DATABASE_URL = os.environ["DATABASE_URL"]
+
+
 def connect():
     try:
         print('Connecting to the PostgreSQL database...')
-        con = psycopg2.connect(os.environ["DATABASE_URL"])
+        con = psycopg2.connect(DATABASE_URL)
         print("Connected")
         return con
     except (Exception, psycopg2.DatabaseError) as error:
