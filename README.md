@@ -18,9 +18,12 @@ pip3 install -r requirements.txt
 
 Criar um servidor sql e executar o arquivo zoo.sql
 
-Modificar o arquivo notebooks/BD.py substituindo o valor da variavel global 'DATABASE_URL' com a url do servidor (senha e usuario inclusivos na url).
+Modificar o arquivo notebooks/BD.py substituindo o valor da variavel global 'DATABASE_URL' com a url do servidor
+(usuario e senha devem estar inclusos na url).
 
 E por fim executar localmente com o comando:
 ```
 gunicorn flaskr.app:app
 ```
+
+# O código fonte também está disponivel no [Github](https://github.com/EMachad0/ban-p2).
